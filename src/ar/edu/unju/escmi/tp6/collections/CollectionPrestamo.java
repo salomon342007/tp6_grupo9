@@ -7,8 +7,8 @@ import ar.edu.unju.escmi.tp6.dominio.Prestamo;
 import ar.edu.unju.escmi.tp6.exceptions.LibroNoEncontradoException;
 
 public class CollectionPrestamo {
-    // cambiado a private para encapsular
-    private static final List<Prestamo> prestamos = new ArrayList<>();
+
+    private static List<Prestamo> prestamos = new ArrayList<>();
 
     public static void guardarPrestamo(Prestamo prestamo) {
         if (prestamo == null) {
@@ -19,8 +19,9 @@ public class CollectionPrestamo {
 
     public static Prestamo buscarPrestamo(int id) throws LibroNoEncontradoException {
         for (Prestamo p : prestamos) {
-            // si getId() devuelve Long/Integer, adaptar la comparación
-            if (p.getId() == id) return p;
+
+            if (p.getId() == id)
+                return p;
         }
         throw new LibroNoEncontradoException("Préstamo con id '" + id + "' no encontrado.");
     }
@@ -34,5 +35,9 @@ public class CollectionPrestamo {
             p.mostrarDatos();
             System.out.println();
         }
+    }
+
+    public static List<Prestamo> getPrestamos() {
+        return prestamos;
     }
 }

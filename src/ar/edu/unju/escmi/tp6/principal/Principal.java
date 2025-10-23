@@ -22,13 +22,14 @@ public class Principal {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        seedExampleData(); // opcional: datos iniciales
+        seedExampleData();
         int opcion = -1;
         while (opcion != 6) {
             mostrarMenu();
             try {
                 System.out.print("Ingrese opción: ");
-                opcion = Integer.parseInt(scanner.nextLine().trim());
+                opcion = scanner.nextInt();
+                scanner.nextLine(); // consumir newline
                 switch (opcion) {
                     case 1 -> registrarLibro();
                     case 2 -> registrarUsuario();
@@ -38,8 +39,9 @@ public class Principal {
                     case 6 -> System.out.println("Saliendo...");
                     default -> System.out.println("Opción inválida.");
                 }
-            } catch (NumberFormatException e) {
+            } catch (InputMismatchException e) {
                 System.out.println("La opción debe ser un número.");
+                scanner.nextLine(); // descartar entrada inválida
             } catch (Exception e) {
                 System.out.println("Error inesperado: " + e.getMessage());
             }
@@ -88,9 +90,11 @@ public class Principal {
     private static void registrarUsuario() {
         try {
             System.out.print("Tipo (1=Alumno, 2=Bibliotecario): ");
-            int tipo = Integer.parseInt(scanner.nextLine().trim());
+            int tipo = scanner.nextInt();
+            scanner.nextLine();
             System.out.print("ID (int): ");
-            int id = Integer.parseInt(scanner.nextLine().trim());
+            int id = scanner.nextInt();
+            scanner.nextLine();
             if (CollectionUsuario.existeId(id)) {
                 System.out.println("ID de usuario ya existe.");
                 return;
@@ -111,7 +115,8 @@ public class Principal {
                 u = new Alumno(id, nombre, apellido, email, nro, curso);
             } else if (tipo == 2) {
                 System.out.print("Legajo (int): ");
-                int legajo = Integer.parseInt(scanner.nextLine().trim());
+                int legajo = scanner.nextInt();
+                scanner.nextLine();
                 u = new Bibliotecario(id, nombre, apellido, email, legajo);
             } else {
                 System.out.println("Tipo inválido.");
@@ -119,8 +124,9 @@ public class Principal {
             }
             CollectionUsuario.guardarUsuario(u);
             System.out.println("Usuario registrado con éxito.");
-        } catch (NumberFormatException e) {
+        } catch (InputMismatchException e) {
             System.out.println("Los campos numéricos deben ser números.");
+            scanner.nextLine(); // descartar token inválido
         } catch (Exception e) {
             System.out.println("Error al registrar usuario: " + e.getMessage());
         }
@@ -129,9 +135,9 @@ public class Principal {
     private static void prestarLibro() {
         try {
             System.out.print("ID usuario (int): ");
-            int idUsuario = Integer.parseInt(scanner.nextLine().trim());
+            int idUsuario = scanner.nextInt();
+            scanner.nextLine();
             Usuario usuario = CollectionUsuario.buscarUsuario(idUsuario);
-
             System.out.print("ID libro (string): ");
             String idLibro = scanner.nextLine().trim();
             Libro libro = CollectionLibro.buscarLibro(idLibro);
@@ -150,34 +156,38 @@ public class Principal {
                 return;
             }
 
-            int nuevoIdPrestamo = CollectionPrestamo.prestamos.size() + 1;
+            int nuevoIdPrestamo = CollectionPrestamo.getPrestamos().size() + 1;
             Prestamo p = new Prestamo(nuevoIdPrestamo, LocalDate.now(), fechaDevolucion, libro, usuario);
             libro.setEstado(false);
             CollectionPrestamo.guardarPrestamo(p);
             System.out.println("Préstamo registrado con ID: " + nuevoIdPrestamo);
         } catch (UsuarioNoRegistradoException | LibroNoEncontradoException | LibroNoDisponibleException e) {
             System.out.println("Error: " + e.getMessage());
-        } catch (NumberFormatException e) {
+        } catch (InputMismatchException e) {
             System.out.println("ID de usuario inválido (debe ser número).");
+            scanner.nextLine();
         }
     }
 
     private static void devolverLibro() {
         try {
             System.out.print("ID préstamo (int): ");
-            int idPrestamo = Integer.parseInt(scanner.nextLine().trim());
-            // buscar préstamo (aquí usamos CollectionPrestamo)
+            int idPrestamo = scanner.nextInt();
+            scanner.nextLine();
+            // buscar préstamo
             Prestamo p = null;
-            for (Prestamo pr : CollectionPrestamo.prestamos) {
-                if (pr.getId() == idPrestamo) { p = pr; break; }
+            for (Prestamo pr : CollectionPrestamo.getPrestamos()) {
+                if (pr.getId() == idPrestamo) {
+                    p = pr;
+                    break;
+                }
             }
             if (p == null) {
                 System.out.println("Préstamo no encontrado.");
                 return;
             }
             if (p.getFechaDevolucion() != null && !p.getLibro().isEstado()) {
-                // si ya tiene fechaDevolucion y libro no está disponible, aún permitimos registrar nueva dev?
-                // interpretación: si fechaDevolución ya está y el libro está disponible, aviso
+
             }
             System.out.print("Fecha devolución real (dd/MM/yyyy): ");
             String fechaStr = scanner.nextLine().trim();
@@ -190,8 +200,9 @@ public class Principal {
             }
             p.registrarDevolucion(fecha);
             System.out.println("Devolución registrada. Libro marcado como disponible.");
-        } catch (NumberFormatException e) {
+        } catch (InputMismatchException e) {
             System.out.println("ID inválido (debe ser número).");
+            scanner.nextLine();
         } catch (Exception e) {
             System.out.println("Error en devolución: " + e.getMessage());
         }
