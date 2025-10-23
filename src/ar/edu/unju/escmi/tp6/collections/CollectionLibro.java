@@ -15,7 +15,8 @@ public class CollectionLibro {
 
     public static Libro buscarLibro(String id) throws LibroNoEncontradoException {
         for (Libro l : libros) {
-            if (l.getId().equals(id)) return l;
+            if (l.getId().equals(id))
+                return l;
         }
         throw new LibroNoEncontradoException("Libro con id '" + id + "' no encontrado.");
     }
@@ -32,6 +33,9 @@ public class CollectionLibro {
     }
 
     public static boolean existeId(String id) {
-        for (Libro l : libros) if (l.getId().equals(id)) return true;
-        return false;}
+        for (Libro l : libros)
+            if (l.getId().equals(id))
+                return true;
+        return false;
+    }
 }

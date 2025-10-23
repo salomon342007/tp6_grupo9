@@ -4,26 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.unju.escmi.tp6.dominio.Prestamo;
-import ar.edu.unju.escmi.tp6.exceptions.LibroNoEncontradoException;
+import ar.edu.unju.escmi.tp6.exceptions.PrestamoNoEncontradoException;
 
 public class CollectionPrestamo {
-
-    private static List<Prestamo> prestamos = new ArrayList<>();
+    public static List<Prestamo> prestamos = new ArrayList<>();
 
     public static void guardarPrestamo(Prestamo prestamo) {
-        if (prestamo == null) {
-            throw new IllegalArgumentException("El préstamo no puede ser null");
-        }
         prestamos.add(prestamo);
     }
 
-    public static Prestamo buscarPrestamo(int id) throws LibroNoEncontradoException {
+    public static Prestamo buscarPrestamo(int id) throws PrestamoNoEncontradoException {
         for (Prestamo p : prestamos) {
-
             if (p.getId() == id)
                 return p;
         }
-        throw new LibroNoEncontradoException("Préstamo con id '" + id + "' no encontrado.");
+        throw new PrestamoNoEncontradoException("Préstamo con id '" + id + "' no encontrado.");
     }
 
     public static void mostrarPrestamos() {
@@ -35,9 +30,5 @@ public class CollectionPrestamo {
             p.mostrarDatos();
             System.out.println();
         }
-    }
-
-    public static List<Prestamo> getPrestamos() {
-        return prestamos;
     }
 }

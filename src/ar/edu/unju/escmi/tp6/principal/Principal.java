@@ -2,7 +2,6 @@ package ar.edu.unju.escmi.tp6.principal;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import ar.edu.unju.escmi.tp6.collections.CollectionLibro;
@@ -15,39 +14,53 @@ import ar.edu.unju.escmi.tp6.dominio.Prestamo;
 import ar.edu.unju.escmi.tp6.dominio.Usuario;
 import ar.edu.unju.escmi.tp6.exceptions.LibroNoDisponibleException;
 import ar.edu.unju.escmi.tp6.exceptions.LibroNoEncontradoException;
+import ar.edu.unju.escmi.tp6.exceptions.PrestamoNoEncontradoException;
 import ar.edu.unju.escmi.tp6.exceptions.UsuarioNoRegistradoException;
 import ar.edu.unju.escmi.tp6.utils.FechaUtil;
 
 public class Principal {
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        seedExampleData();
+        try {
+            seedExampleData();
+            runMenu();
+        } catch (Exception e) {
+            System.out.println("Error crítico: " + e.getMessage());
+        } finally {
+            // finally garantizado para liberar recurso Scanner
+            if (scanner != null) {
+                scanner.close();
+            }
+            System.out.println("Programa finalizado.");
+        }
+    }
+
+    private static void runMenu() {
         int opcion = -1;
         while (opcion != 6) {
             mostrarMenu();
             try {
                 System.out.print("Ingrese opción: ");
-                opcion = scanner.nextInt();
-                scanner.nextLine(); // consumir newline
+                opcion = Integer.parseInt(scanner.nextLine().trim());
                 switch (opcion) {
                     case 1 -> registrarLibro();
                     case 2 -> registrarUsuario();
                     case 3 -> prestarLibro();
                     case 4 -> devolverLibro();
-                    case 5 -> CollectionLibro.mostrarLibros();
+                    case 5 -> listarLibros();
                     case 6 -> System.out.println("Saliendo...");
                     default -> System.out.println("Opción inválida.");
                 }
-            } catch (InputMismatchException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("La opción debe ser un número.");
-                scanner.nextLine(); // descartar entrada inválida
             } catch (Exception e) {
                 System.out.println("Error inesperado: " + e.getMessage());
+            } finally {
+                // Mensaje de separación entre iteraciones
+                System.out.println();
             }
-            System.out.println();
         }
-        scanner.close();
     }
 
     private static void mostrarMenu() {
@@ -69,9 +82,10 @@ public class Principal {
                 return;
             }
             if (CollectionLibro.existeId(id)) {
-                System.out.println("ID ya existe. No se puede crear libro duplicado.");
+                System.out.println("ID ya existe.");
                 return;
             }
+
             System.out.print("Título: ");
             String titulo = scanner.nextLine().trim();
             System.out.print("Autor: ");
@@ -84,21 +98,22 @@ public class Principal {
             System.out.println("Libro registrado con éxito.");
         } catch (Exception e) {
             System.out.println("Error al registrar libro: " + e.getMessage());
+        } finally {
+            System.out.println("Operación registrar libro finalizada.\n");
         }
     }
 
     private static void registrarUsuario() {
         try {
             System.out.print("Tipo (1=Alumno, 2=Bibliotecario): ");
-            int tipo = scanner.nextInt();
-            scanner.nextLine();
+            int tipo = Integer.parseInt(scanner.nextLine().trim());
             System.out.print("ID (int): ");
-            int id = scanner.nextInt();
-            scanner.nextLine();
+            int id = Integer.parseInt(scanner.nextLine().trim());
             if (CollectionUsuario.existeId(id)) {
                 System.out.println("ID de usuario ya existe.");
                 return;
             }
+
             System.out.print("Nombre: ");
             String nombre = scanner.nextLine().trim();
             System.out.print("Apellido: ");
@@ -115,8 +130,7 @@ public class Principal {
                 u = new Alumno(id, nombre, apellido, email, nro, curso);
             } else if (tipo == 2) {
                 System.out.print("Legajo (int): ");
-                int legajo = scanner.nextInt();
-                scanner.nextLine();
+                int legajo = Integer.parseInt(scanner.nextLine().trim());
                 u = new Bibliotecario(id, nombre, apellido, email, legajo);
             } else {
                 System.out.println("Tipo inválido.");
@@ -124,27 +138,24 @@ public class Principal {
             }
             CollectionUsuario.guardarUsuario(u);
             System.out.println("Usuario registrado con éxito.");
-        } catch (InputMismatchException e) {
+        } catch (NumberFormatException e) {
             System.out.println("Los campos numéricos deben ser números.");
-            scanner.nextLine(); // descartar token inválido
         } catch (Exception e) {
             System.out.println("Error al registrar usuario: " + e.getMessage());
+        } finally {
+            System.out.println("Operación registrar usuario finalizada.\n");
         }
     }
 
     private static void prestarLibro() {
         try {
             System.out.print("ID usuario (int): ");
-            int idUsuario = scanner.nextInt();
-            scanner.nextLine();
+            int idUsuario = Integer.parseInt(scanner.nextLine().trim());
             Usuario usuario = CollectionUsuario.buscarUsuario(idUsuario);
+
             System.out.print("ID libro (string): ");
             String idLibro = scanner.nextLine().trim();
             Libro libro = CollectionLibro.buscarLibro(idLibro);
-
-            if (!libro.isEstado()) {
-                throw new LibroNoDisponibleException("El libro no está disponible para préstamo.");
-            }
 
             System.out.print("Fecha devolución (dd/MM/yyyy): ");
             String fechaDevStr = scanner.nextLine().trim();
@@ -156,39 +167,26 @@ public class Principal {
                 return;
             }
 
-            int nuevoIdPrestamo = CollectionPrestamo.getPrestamos().size() + 1;
-            Prestamo p = new Prestamo(nuevoIdPrestamo, LocalDate.now(), fechaDevolucion, libro, usuario);
-            libro.setEstado(false);
-            CollectionPrestamo.guardarPrestamo(p);
-            System.out.println("Préstamo registrado con ID: " + nuevoIdPrestamo);
+            int nuevoIdPrestamo = CollectionPrestamo.prestamos.size() + 1;
+            Prestamo p = Prestamo.crearPrestamo(nuevoIdPrestamo, libro, usuario, fechaDevolucion);
+            System.out.println("Préstamo registrado con ID: " + p.getId());
         } catch (UsuarioNoRegistradoException | LibroNoEncontradoException | LibroNoDisponibleException e) {
             System.out.println("Error: " + e.getMessage());
-        } catch (InputMismatchException e) {
+        } catch (NumberFormatException e) {
             System.out.println("ID de usuario inválido (debe ser número).");
-            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("Error inesperado en préstamo: " + e.getMessage());
+        } finally {
+            System.out.println("Fin del proceso de préstamo.\n");
         }
     }
 
     private static void devolverLibro() {
         try {
             System.out.print("ID préstamo (int): ");
-            int idPrestamo = scanner.nextInt();
-            scanner.nextLine();
-            // buscar préstamo
-            Prestamo p = null;
-            for (Prestamo pr : CollectionPrestamo.getPrestamos()) {
-                if (pr.getId() == idPrestamo) {
-                    p = pr;
-                    break;
-                }
-            }
-            if (p == null) {
-                System.out.println("Préstamo no encontrado.");
-                return;
-            }
-            if (p.getFechaDevolucion() != null && !p.getLibro().isEstado()) {
+            int idPrestamo = Integer.parseInt(scanner.nextLine().trim());
+            Prestamo p = CollectionPrestamo.buscarPrestamo(idPrestamo);
 
-            }
             System.out.print("Fecha devolución real (dd/MM/yyyy): ");
             String fechaStr = scanner.nextLine().trim();
             LocalDate fecha;
@@ -198,22 +196,37 @@ public class Principal {
                 System.out.println("Formato de fecha inválido. Use dd/MM/yyyy.");
                 return;
             }
+
             p.registrarDevolucion(fecha);
             System.out.println("Devolución registrada. Libro marcado como disponible.");
-        } catch (InputMismatchException e) {
+        } catch (PrestamoNoEncontradoException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (NumberFormatException e) {
             System.out.println("ID inválido (debe ser número).");
-            scanner.nextLine();
         } catch (Exception e) {
             System.out.println("Error en devolución: " + e.getMessage());
+        } finally {
+            System.out.println("Fin del proceso de devolución.\n");
+        }
+    }
+
+    private static void listarLibros() {
+        try {
+            CollectionLibro.mostrarLibros();
+        } catch (Exception e) {
+            System.out.println("Error al listar libros: " + e.getMessage());
+        } finally {
+            System.out.println("Operación listar libros finalizada.\n");
         }
     }
 
     private static void seedExampleData() {
-        // Datos de ejemplo para que pruebes rápido
+        // Datos iniciales para probar
         Libro l1 = new Libro("L1", "J. K. Autor", "Programación Java", "ISBN-001");
         Libro l2 = new Libro("L2", "A. Escritor", "Estructuras de Datos", "ISBN-002");
         CollectionLibro.guardarLibro(l1);
         CollectionLibro.guardarLibro(l2);
+
         Alumno a = new Alumno(1, "Juan", "Perez", "juan@example.com", "LB123", "3A");
         Bibliotecario b = new Bibliotecario(2, "Ana", "Gomez", "ana@example.com", 1001);
         CollectionUsuario.guardarUsuario(a);

@@ -1,5 +1,7 @@
 package ar.edu.unju.escmi.tp6.dominio;
 
+import ar.edu.unju.escmi.tp6.exceptions.LibroNoDisponibleException;
+
 public class Libro {
     private String id;
     private String autor;
@@ -15,12 +17,43 @@ public class Libro {
         this.estado = true;
     }
 
-    public String getId() { return id; }
-    public String getAutor() { return autor; }
-    public String getTitulo() { return titulo; }
-    public String getIsbn() { return isbn; }
-    public boolean isEstado() { return estado; }
-    public void setEstado(boolean estado) { this.estado = estado; }
+    public String getId() {
+        return id;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    // Se usa internamente y por pruebas/servicios
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
+
+    // Comportamiento: prestar
+    public void prestar() throws LibroNoDisponibleException {
+        if (!this.estado) {
+            throw new LibroNoDisponibleException("El libro '" + titulo + "' ya está prestado.");
+        }
+        this.estado = false;
+    }
+
+    // Comportamiento: devolver
+    public void devolver() {
+        this.estado = true;
+    }
 
     public void mostrarDatos() {
         System.out.println("---- Libro ----");

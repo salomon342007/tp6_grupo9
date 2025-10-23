@@ -10,8 +10,13 @@ public class Alumno extends Usuario {
         this.curso = curso;
     }
 
-    public String getNroLibreta() { return nroLibreta; }
-    public String getCurso() { return curso; }
+    public String getNroLibreta() {
+        return nroLibreta;
+    }
+
+    public String getCurso() {
+        return curso;
+    }
 
     @Override
     public void mostrarDatos() {
