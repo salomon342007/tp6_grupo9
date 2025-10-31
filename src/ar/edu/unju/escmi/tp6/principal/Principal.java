@@ -167,10 +167,20 @@ public class Principal {
                 return;
             }
 
-            int nuevoIdPrestamo = CollectionPrestamo.prestamos.size() + 1;
-            Prestamo p = Prestamo.crearPrestamo(nuevoIdPrestamo, libro, usuario, fechaDevolucion);
+            // Validar y marcar libro como prestado antes de crear el objeto Prestamo
+            try {
+                libro.prestar(); // lanzará LibroNoDisponibleException si ya está prestado
+            } catch (LibroNoDisponibleException e) {
+                System.out.println("Error: " + e.getMessage());
+                return;
+            }
+
+            int nuevoIdPrestamo = CollectionPrestamo.obtenerProximoId();
+            Prestamo p = new Prestamo(nuevoIdPrestamo, LocalDate.now(), fechaDevolucion, libro, usuario);
+            CollectionPrestamo.guardarPrestamo(p);
+
             System.out.println("Préstamo registrado con ID: " + p.getId());
-        } catch (UsuarioNoRegistradoException | LibroNoEncontradoException | LibroNoDisponibleException e) {
+        } catch (UsuarioNoRegistradoException | LibroNoEncontradoException e) {
             System.out.println("Error: " + e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("ID de usuario inválido (debe ser número).");

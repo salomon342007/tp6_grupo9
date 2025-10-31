@@ -7,7 +7,7 @@ import ar.edu.unju.escmi.tp6.dominio.Prestamo;
 import ar.edu.unju.escmi.tp6.exceptions.PrestamoNoEncontradoException;
 
 public class CollectionPrestamo {
-    public static List<Prestamo> prestamos = new ArrayList<>();
+    private static List<Prestamo> prestamos = new ArrayList<>();
 
     public static void guardarPrestamo(Prestamo prestamo) {
         prestamos.add(prestamo);
@@ -30,5 +30,10 @@ public class CollectionPrestamo {
             p.mostrarDatos();
             System.out.println();
         }
+    }
+
+    // Nuevo: devuelve el próximo id disponible
+    public static int obtenerProximoId() {
+        return prestamos.size() + 1;
     }
 }

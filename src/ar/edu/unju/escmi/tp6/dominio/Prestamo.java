@@ -2,9 +2,6 @@ package ar.edu.unju.escmi.tp6.dominio;
 
 import java.time.LocalDate;
 
-import ar.edu.unju.escmi.tp6.collections.CollectionPrestamo;
-import ar.edu.unju.escmi.tp6.exceptions.LibroNoDisponibleException;
-
 public class Prestamo {
     private int id;
     private LocalDate fechaPrestamo;
@@ -38,16 +35,6 @@ public class Prestamo {
 
     public Usuario getUsuario() {
         return usuario;
-    }
-
-    // Método estático para encapsular la creación de un préstamo con validación
-    public static Prestamo crearPrestamo(int id, Libro libro, Usuario usuario, LocalDate fechaDevolucion)
-            throws LibroNoDisponibleException {
-        // delega a Libro la validación de disponibilidad
-        libro.prestar();
-        Prestamo p = new Prestamo(id, LocalDate.now(), fechaDevolucion, libro, usuario);
-        CollectionPrestamo.guardarPrestamo(p);
-        return p;
     }
 
     // Registrar la devolución: guarda la fecha y libera el libro
