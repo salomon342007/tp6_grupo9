@@ -18,50 +18,26 @@ public class Prestamo {
         this.usuario = usuario;
     }
 
-    // Retorna el id del préstamo
-    public int getId() {
-        return id;
-    }
+    // Getters
+    public int getId() { return id; }
+    public LocalDate getFechaPrestamo() { return fechaPrestamo; }
+    public LocalDate getFechaDevolucion() { return fechaDevolucion; }
+    public Libro getLibro() { return libro; }
+    public Usuario getUsuario() { return usuario; }
 
-    // Retorna la fecha de préstamo
-    public LocalDate getFechaPrestamo() {
-        return fechaPrestamo;
-    }
-
-    // Retorna la fecha de devolución (null si aún no fue devuelto)
-    public LocalDate getFechaDevolucion() {
-        return fechaDevolucion;
-    }
-
-    // Retorna el libro prestado
-    public Libro getLibro() {
-        return libro;
-    }
-
-    // Retorna el usuario que tomó el préstamo
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    // Registra la devolución del libro
+    // Registrar devolución y liberar libro
     public void registrarDevolucion(LocalDate fecha) {
         this.fechaDevolucion = fecha;
-        if (this.libro != null) {
-            this.libro.devolver();
-        }
+        if (libro != null) libro.devolver();
     }
 
-    // Muestra los datos del préstamo por consola
+    // Muestra datos del préstamo
     public void mostrarDatos() {
         System.out.println("---- Préstamo ----");
         System.out.println("ID Préstamo: " + id);
         System.out.println("Fecha Préstamo: " + fechaPrestamo);
         System.out.println("Fecha Devolución: " + (fechaDevolucion == null ? "Pendiente" : fechaDevolucion));
-        if (usuario != null) {
-            System.out.println("Usuario ID: " + usuario.getId());
-        }
-        if (libro != null) {
-            System.out.println("Libro: " + libro.getTitulo() + " (ID: " + libro.getId() + ")");
-        }
+        if (usuario != null) System.out.println("Usuario ID: " + usuario.getId());
+        if (libro != null) System.out.println("Libro: " + libro.getTitulo() + " (ID: " + libro.getId() + ")");
     }
 }

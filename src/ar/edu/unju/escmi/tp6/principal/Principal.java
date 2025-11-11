@@ -167,9 +167,9 @@ public class Principal {
                 return;
             }
 
-            // Validar y marcar libro como prestado antes de crear el objeto Prestamo
+            // marcar libro como prestado (lanza si no disponible)
             try {
-                libro.prestar(); // lanzará LibroNoDisponibleException si ya está prestado
+                libro.prestar();
             } catch (LibroNoDisponibleException e) {
                 System.out.println("Error: " + e.getMessage());
                 return;
@@ -187,7 +187,7 @@ public class Principal {
         } catch (Exception e) {
             System.out.println("Error inesperado en préstamo: " + e.getMessage());
         } finally {
-            System.out.println("Fin del proceso de préstamo.\n");
+            System.out.println();
         }
     }
 
@@ -196,8 +196,11 @@ public class Principal {
             System.out.print("ID préstamo (int): ");
             int idPrestamo = Integer.parseInt(scanner.nextLine().trim());
             Prestamo p = CollectionPrestamo.buscarPrestamo(idPrestamo);
-
-            System.out.print("Fecha devolución real (dd/MM/yyyy): ");
+            if (p.getFechaDevolucion() != null) {
+                System.out.println("Préstamo ya devuelto.");
+                return;
+            }
+            System.out.print("Fecha devolución (dd/MM/yyyy): ");
             String fechaStr = scanner.nextLine().trim();
             LocalDate fecha;
             try {
@@ -206,17 +209,16 @@ public class Principal {
                 System.out.println("Formato de fecha inválido. Use dd/MM/yyyy.");
                 return;
             }
-
             p.registrarDevolucion(fecha);
-            System.out.println("Devolución registrada. Libro marcado como disponible.");
+            System.out.println("Devolución registrada.");
         } catch (PrestamoNoEncontradoException e) {
             System.out.println("Error: " + e.getMessage());
         } catch (NumberFormatException e) {
-            System.out.println("ID inválido (debe ser número).");
+            System.out.println("ID de préstamo inválido.");
         } catch (Exception e) {
             System.out.println("Error en devolución: " + e.getMessage());
         } finally {
-            System.out.println("Fin del proceso de devolución.\n");
+            System.out.println();
         }
     }
 

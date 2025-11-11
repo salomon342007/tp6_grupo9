@@ -15,48 +15,28 @@ public class Libro {
         this.autor = autor;
         this.titulo = titulo;
         this.isbn = isbn;
-        this.estado = true; // Inicia disponible
+        this.estado = true; // disponible por defecto
     }
 
-    // Retorna el id del libro
-    public String getId() {
-        return id;
-    }
+    // Getters
+    public String getId() { return id; }
+    public String getAutor() { return autor; }
+    public String getTitulo() { return titulo; }
+    public String getIsbn() { return isbn; }
+    public boolean isDisponible() { return estado; }
 
-    // Retorna el autor del libro
-    public String getAutor() {
-        return autor;
-    }
-
-    // Retorna el título del libro
-    public String getTitulo() {
-        return titulo;
-    }
-
-    // Retorna el isbn del libro
-    public String getIsbn() {
-        return isbn;
-    }
-
-    // Retorna true si está disponible, false si está prestado
-    public boolean isDisponible() {
-        return estado;
-    }
-
-    // Marca el libro como prestado
+    // Marca como prestado, lanza si no está disponible
     public void prestar() throws LibroNoDisponibleException {
-        if (!estado) {
-            throw new LibroNoDisponibleException("El libro '" + titulo + "' no está disponible.");
-        }
+        if (!estado) throw new LibroNoDisponibleException("El libro '" + titulo + "' no está disponible.");
         estado = false;
     }
 
-    // Marca el libro como devuelto (disponible)
+    // Marca como devuelto (disponible)
     public void devolver() {
         estado = true;
     }
 
-    // Muestra los datos del libro por consola
+    // Muestra datos del libro
     public void mostrarDatos() {
         System.out.println("---- Libro ----");
         System.out.println("ID: " + id);
