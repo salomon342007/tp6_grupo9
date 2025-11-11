@@ -9,6 +9,7 @@ public class Prestamo {
     private Libro libro;
     private Usuario usuario;
 
+    // Constructor
     public Prestamo(int id, LocalDate fechaPrestamo, LocalDate fechaDevolucion, Libro libro, Usuario usuario) {
         this.id = id;
         this.fechaPrestamo = fechaPrestamo;
@@ -17,34 +18,40 @@ public class Prestamo {
         this.usuario = usuario;
     }
 
+    // Retorna el id del préstamo
     public int getId() {
         return id;
     }
 
+    // Retorna la fecha de préstamo
     public LocalDate getFechaPrestamo() {
         return fechaPrestamo;
     }
 
+    // Retorna la fecha de devolución (null si aún no fue devuelto)
     public LocalDate getFechaDevolucion() {
         return fechaDevolucion;
     }
 
+    // Retorna el libro prestado
     public Libro getLibro() {
         return libro;
     }
 
+    // Retorna el usuario que tomó el préstamo
     public Usuario getUsuario() {
         return usuario;
     }
 
-    // Registrar la devolución: guarda la fecha y libera el libro
-    public void registrarDevolucion(LocalDate fechaDevolucion) {
-        this.fechaDevolucion = fechaDevolucion;
+    // Registra la devolución del libro
+    public void registrarDevolucion(LocalDate fecha) {
+        this.fechaDevolucion = fecha;
         if (this.libro != null) {
             this.libro.devolver();
         }
     }
 
+    // Muestra los datos del préstamo por consola
     public void mostrarDatos() {
         System.out.println("---- Préstamo ----");
         System.out.println("ID Préstamo: " + id);
@@ -54,7 +61,7 @@ public class Prestamo {
             System.out.println("Usuario ID: " + usuario.getId());
         }
         if (libro != null) {
-            System.out.println("Libro ID: " + libro.getId() + " - " + libro.getTitulo());
+            System.out.println("Libro: " + libro.getTitulo() + " (ID: " + libro.getId() + ")");
         }
     }
 }
