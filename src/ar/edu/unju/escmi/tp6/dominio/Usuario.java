@@ -6,6 +6,7 @@ public abstract class Usuario {
     protected String apellido;
     protected String email;
 
+    // Constructor
     public Usuario(int id, String nombre, String apellido, String email) {
         this.id = id;
         this.nombre = nombre;
@@ -17,5 +18,6 @@ public abstract class Usuario {
         return id;
     }
 
+    // Mostrar datos (implementado por subclases)
     public abstract void mostrarDatos();
 }

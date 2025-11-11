@@ -18,14 +18,13 @@ public class CollectionPrestamo {
     // Busca un préstamo por id o lanza excepción
     public static Prestamo buscarPrestamo(int id) throws PrestamoNoEncontradoException {
         for (Prestamo p : prestamos) {
-            if (p.getId() == id)
-                return p;
+            if (p.getId() == id) return p;
         }
         throw new PrestamoNoEncontradoException("Préstamo con id '" + id + "' no encontrado.");
     }
 
-    // Muestra préstamos
-    public static void mostrarPrestamos() {
+    // Muestra todos los préstamos
+    public static void mostrarPrestamo() { // coincide con UML (muestra la colección)
         if (prestamos.isEmpty()) {
             System.out.println("No hay préstamos registrados.");
             return;

@@ -18,8 +18,7 @@ public class CollectionUsuario {
     // Busca un usuario por id o lanza excepción si no existe
     public static Usuario buscarUsuario(int id) throws UsuarioNoRegistradoException {
         for (Usuario u : usuarios) {
-            if (u.getId() == id)
-                return u;
+            if (u.getId() == id) return u;
         }
         throw new UsuarioNoRegistradoException("Usuario con id '" + id + "' no registrado.");
     }
@@ -39,8 +38,7 @@ public class CollectionUsuario {
     // Indica si existe un usuario con el id dado
     public static boolean existeId(int id) {
         for (Usuario u : usuarios)
-            if (u.getId() == id)
-                return true;
+            if (u.getId() == id) return true;
         return false;
     }
 }

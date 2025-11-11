@@ -8,9 +8,7 @@ public class Bibliotecario extends Usuario {
         this.legajo = legajo;
     }
 
-    public int getLegajo() {
-        return legajo;
-    }
+    public int getLegajo() { return legajo; }
 
     @Override
     public void mostrarDatos() {

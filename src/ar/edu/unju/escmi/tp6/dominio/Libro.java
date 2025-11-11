@@ -15,7 +15,7 @@ public class Libro {
         this.autor = autor;
         this.titulo = titulo;
         this.isbn = isbn;
-        this.estado = true; // disponible por defecto
+        this.estado = true;
     }
 
     // Getters
@@ -25,16 +25,14 @@ public class Libro {
     public String getIsbn() { return isbn; }
     public boolean isDisponible() { return estado; }
 
-    // Marca como prestado, lanza si no está disponible
+    // Marca como prestado
     public void prestar() throws LibroNoDisponibleException {
         if (!estado) throw new LibroNoDisponibleException("El libro '" + titulo + "' no está disponible.");
         estado = false;
     }
 
-    // Marca como devuelto (disponible)
-    public void devolver() {
-        estado = true;
-    }
+    // Marca como devuelto
+    public void devolver() { estado = true; }
 
     // Muestra datos del libro
     public void mostrarDatos() {

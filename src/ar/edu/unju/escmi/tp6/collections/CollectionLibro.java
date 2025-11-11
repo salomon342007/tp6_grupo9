@@ -7,24 +7,18 @@ import ar.edu.unju.escmi.tp6.dominio.Libro;
 import ar.edu.unju.escmi.tp6.exceptions.LibroNoEncontradoException;
 
 public class CollectionLibro {
-    // La lista se expresa mediante relación flecha en el diagrama, aquí es private
+    // lista de libros (relación flecha en diagrama)
     private static List<Libro> libros = new ArrayList<>();
 
-    // Getter para acceder a la lista (si es necesario)
-    public static List<Libro> getLibros() {
-        return libros;
-    }
-
-    // Agrega un libro a la colección
+    // Guarda un libro
     public static void guardarLibro(Libro libro) {
         libros.add(libro);
     }
 
-    // Busca un libro por id
+    // Busca un libro por id (String) o lanza excepción
     public static Libro buscarLibro(String id) throws LibroNoEncontradoException {
         for (Libro l : libros) {
-            if (l.getId().equals(id))
-                return l;
+            if (l.getId().equals(id)) return l;
         }
         throw new LibroNoEncontradoException("Libro con id '" + id + "' no encontrado.");
     }
@@ -41,11 +35,10 @@ public class CollectionLibro {
         }
     }
 
-    // Verifica si existe un libro con el id indicado
+    // Indica si existe un libro con el id indicado
     public static boolean existeId(String id) {
         for (Libro l : libros)
-            if (l.getId().equals(id))
-                return true;
+            if (l.getId().equals(id)) return true;
         return false;
     }
 }
