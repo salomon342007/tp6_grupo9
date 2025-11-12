@@ -7,7 +7,6 @@ import ar.edu.unju.escmi.tp6.dominio.Libro;
 import ar.edu.unju.escmi.tp6.exceptions.LibroNoEncontradoException;
 
 public class CollectionLibro {
-    // lista de libros (relación flecha en diagrama)
     private static List<Libro> libros = new ArrayList<>();
 
     // Guarda un libro
